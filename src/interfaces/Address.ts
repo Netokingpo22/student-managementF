@@ -1,6 +1,6 @@
 export interface Address {
   addressId: number
-  addressLine: string
+  street: string
   city: string
   state: string
   zipCode: string

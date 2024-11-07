@@ -1,25 +1,20 @@
 import type { Phone } from '@/interfaces/Phone'
+import type { PhonePost } from '@/interfaces/PhonePost'
 
 export class PhoneService {
-  static async addPhone(
-    studentId: number,
-    phoneNumber: string,
-    phoneType: string,
-    countryCode: string,
-    areaCode: string,
-  ): Promise<Phone> {
+  static async addPhone(newPhonePost: PhonePost): Promise<Phone> {
     const response = await fetch('http://localhost:8080/phones', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        phoneNumber: phoneNumber,
-        phoneType: phoneType,
-        countryCode: countryCode,
-        areaCode: areaCode,
+        phoneNumber: newPhonePost.phoneNumber,
+        phoneType: newPhonePost.phoneType,
+        countryCode: newPhonePost.countryCode,
+        areaCode: newPhonePost.areaCode,
         student: {
-          studentId: studentId,
+          studentId: newPhonePost.studentId,
         },
       }),
     })
@@ -39,5 +34,26 @@ export class PhoneService {
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
+  }
+
+  static async updatePhone(newPhonePost: PhonePost, phoneId: number): Promise<Phone> {
+    const response = await fetch(`http://localhost:8080/phones/${phoneId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        phoneNumber: newPhonePost.phoneNumber,
+        phoneType: newPhonePost.phoneType,
+        countryCode: newPhonePost.countryCode,
+        areaCode: newPhonePost.areaCode,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+
+    return await response.json()
   }
 }

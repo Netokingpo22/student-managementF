@@ -1,36 +1,55 @@
 <template>
-    <div>
-        <div v-if="student">
-            <p><strong>ID:</strong> {{ student.studentId }}</p>
-            <p><strong>First Name:</strong> {{ student.firstName }}</p>
-            <p><strong>Middle Name:</strong> {{ student.middleName }}</p>
-            <p><strong>Last Name:</strong> {{ student.lastName }}</p>
-            <p><strong>Gender:</strong> {{ student.gender }}</p>
-
-            <h2>Emails</h2>
-            <EmailComponent :emails="student.emails" :studentId="student.studentId" />
-
-            <h2>Addresses</h2>
-            <AddressComponent :addresses="student.addresses" :studentId="student.studentId" />
-
-            <h2>Phones</h2>
-            <PhoneComponent :phones="student.phones" :studentId="student.studentId" />
+    <div class="flex justify-center items-center w-full h-screen">
+        <div v-if="student" class="flex flex-col gap-y-1 w-4/6">
+            <div class="flex flex-row gap-x-5">
+                <p><strong>ID:</strong> {{ student.studentId }}</p>
+            </div>
+            <div class="flex flex-row gap-x-5">
+                <p><strong>First Name:</strong> {{ student.firstName }}</p>
+                <p><strong>Middle Name:</strong> {{ student.middleName }}</p>
+                <p><strong>Last Name:</strong> {{ student.lastName }}</p>
+            </div>
+            <div class="flex flex-row gap-x-5">
+                <p><strong>Gender:</strong> {{ student.gender }}</p>
+                <p><strong>CreatedOn:</strong> {{ student.createdOn }}</p>
+                <p><strong>UpdatedOn:</strong> {{ student.updatedOn }}</p>
+            </div>
+            <EmailManagement :emails="student.emails" :studentId="student.studentId" />
+            <AddressManagement :addresses="student.addresses" :studentId="student.studentId" />
+            <PhoneManagement :phones="student.phones" :studentId="student.studentId" />
+            <v-btn @click="dialogVisible = true" color="primary">Edit Student</v-btn>
+            <v-btn @click="showDeleteDialog = true" color="red">Delete Student</v-btn>
+            <StudentEdit :student="student" :dialogVisible="dialogVisible" @update:modelValue="dialogVisible = $event"
+                @updateStudent="updateStudent" />
+            <DeleteConfirmationDialog v-model="showDeleteDialog" @confirm="deleteStudent" />
         </div>
+        <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
+            {{ snackbarMessage }}
+            <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+        </v-snackbar>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { StudentService } from '@/services/studentService';
+import { useRoute, useRouter } from 'vue-router';
+import { StudentService } from '@/services/StudentService';
 import type { Student } from '@/interfaces/Student';
-import EmailComponent from '../components/EmailComponent.vue';
-import AddressComponent from '../components/AddressComponent.vue';
-import PhoneComponent from '../components/PhoneComponent.vue';
+import EmailManagement from '@/components/EmailComponent/EmailManagement.vue';
+import AddressManagement from '@/components/AddressComponent/AddressManagement.vue';
+import PhoneManagement from '@/components/PhoneComponent/PhoneManagement.vue';
+import StudentEdit from '../components/StudentEdit.vue';
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue';
+import { useSnackbar } from '@/components/Composables/useSnackbar';
+
+const { snackbarVisible, snackbarMessage, snackbarColor, showSnackbar } = useSnackbar();
 
 const route = useRoute();
+const router = useRouter();
 const studentId = ref<string | string[]>(route.params.id);
 const student = ref<Student | null>(null);
+const dialogVisible = ref(false);
+const showDeleteDialog = ref(false);
 
 const fetchStudentDetails = async () => {
     try {
@@ -38,6 +57,26 @@ const fetchStudentDetails = async () => {
         student.value = await StudentService.fetchStudentDetails(id);
     } catch (error) {
         console.error('Error fetching student details:', error);
+        showSnackbar('Error fetching student details!', 'red');
+    }
+};
+
+const updateStudent = (updatedStudent: Student) => {
+    student.value = updatedStudent;
+};
+
+const deleteStudent = async () => {
+    try {
+        if (student.value) {
+            await StudentService.deleteStudent(student.value.studentId);
+            showSnackbar('Student deleted successfully!', 'green');
+            setTimeout(() => {
+                router.push('/');
+            }, 1000);
+        }
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        showSnackbar('Error deleting student!', 'red');
     }
 };
 
@@ -45,5 +84,3 @@ onMounted(() => {
     fetchStudentDetails();
 });
 </script>
-
-<style scoped></style>
