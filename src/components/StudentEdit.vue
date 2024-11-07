@@ -13,16 +13,16 @@
                 </v-form>
             </v-card-text>
             <v-card-actions>
-                <v-btn color="red darken-1" @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" @click="submit">Submit</v-btn>
+                <v-btn @click="close" variant="tonal" color="error">Cancel&nbsp;<v-icon
+                        icon="mdi-close"></v-icon></v-btn>
+                <v-btn @click="submit" variant="tonal" color="primary">update&nbsp;<v-icon
+                        icon="mdi-check"></v-icon></v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
-
-    <!-- Snackbar for feedback -->
     <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
         {{ snackbarMessage }}
-        <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+        <v-btn @click="snackbarVisible = false">Close</v-btn>
     </v-snackbar>
 </template>
 
@@ -30,7 +30,7 @@
 import { ref, watch, defineProps, defineEmits } from 'vue';
 import { StudentService } from '@/services/StudentService';
 import { useSnackbar } from '@/components/Composables/useSnackbar';
-import type { Student } from '@/interfaces/Student';
+import type { Student } from '@/interfaces/StudentInterfaces';
 
 const props = defineProps<{
     student: Student | null;

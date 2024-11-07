@@ -1,5 +1,4 @@
-import type { Student } from '@/interfaces/Student'
-import type { StudentPost } from '@/interfaces/StudentPost'
+import type { Student, StudentPost } from '@/interfaces/StudentInterfaces'
 
 export class StudentService {
   static async createStudent(studentData: StudentPost): Promise<Student> {

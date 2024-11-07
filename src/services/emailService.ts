@@ -1,5 +1,4 @@
-import type { Email } from '@/interfaces/Email'
-import type { EmailPost } from '@/interfaces/EmailPost'
+import type { Email, EmailPost } from '@/interfaces/EmailInterfaces'
 
 export class EmailService {
   static async addEmail(newEmailPost: EmailPost): Promise<Email> {

@@ -17,9 +17,12 @@
                 <td>{{ address.city || 'N/A' }}</td>
                 <td>{{ address.state || 'N/A' }}</td>
                 <td>{{ address.zipCode || 'N/A' }}</td>
-                <td>
-                    <v-btn @click="$emit('edit', address)" color="warning" class="mr-2">Edit</v-btn>
-                    <v-btn @click="$emit('delete', address.addressId)" color="error">Delete</v-btn>
+                <td class="flex justify-end items-center">
+                    <v-btn @click="$emit('edit', address)" variant="tonal" color="primary" class="mr-2">Edit&nbsp;
+                        <v-icon icon="mdi-pencil"></v-icon></v-btn>
+                    <v-btn @click="$emit('delete', address.addressId)" variant="tonal" color="error">Delete&nbsp;<v-icon
+                            icon="mdi-delete"></v-icon>
+                    </v-btn>
                 </td>
             </tr>
         </tbody>
@@ -27,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Address } from '@/interfaces/Address';
+import type { Address } from '@/interfaces/AddressInterfaces';
 
 const props = defineProps<{ addresses: Address[] }>();
 </script>

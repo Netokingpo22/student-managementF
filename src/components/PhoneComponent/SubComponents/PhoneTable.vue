@@ -15,11 +15,14 @@
                 <td>{{ phone.phoneId }}</td>
                 <td>{{ phone.phoneNumber }}</td>
                 <td>{{ phone.phoneType }}</td>
-                <td>{{ phone.countryCode || 'N/A' }}</td> <!-- Campo de código de país -->
-                <td>{{ phone.areaCode || 'N/A' }}</td> <!-- Campo de código de área -->
-                <td>
-                    <v-btn @click="$emit('edit', phone)" color="warning" class="mr-2">Edit</v-btn>
-                    <v-btn @click="$emit('delete', phone.phoneId)" color="error">Delete</v-btn>
+                <td>{{ phone.countryCode || 'N/A' }}</td>
+                <td>{{ phone.areaCode || 'N/A' }}</td>
+                <td class="flex justify-end items-center">
+                    <v-btn @click="$emit('edit', phone)" variant="tonal" color="primary" class="mr-2">Edit&nbsp; <v-icon
+                            icon="mdi-pencil"></v-icon></v-btn>
+                    <v-btn @click="$emit('delete', phone.phoneId)" variant="tonal" color="error">Delete&nbsp;<v-icon
+                            icon="mdi-delete"></v-icon>
+                    </v-btn>
                 </td>
             </tr>
         </tbody>
@@ -27,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Phone } from '@/interfaces/Phone';
+import type { Phone } from '@/interfaces/PhoneInterfaces';
 
 const props = defineProps<{ phones: Phone[] }>();
 </script>

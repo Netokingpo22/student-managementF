@@ -1,4 +1,4 @@
-import type { StudentDTO } from '@/interfaces/StudentDTO'
+import type { StudentDTO } from '@/interfaces/StudentInterfaces'
 
 export class StudentDTOService {
   static async fetchStudents(): Promise<StudentDTO[]> {

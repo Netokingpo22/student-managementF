@@ -7,3 +7,11 @@ export interface Phone {
   createdOn: string
   updatedOn: string
 }
+
+export interface PhonePost {
+  phoneNumber: string
+  phoneType: string
+  studentId: number
+  countryCode?: string
+  areaCode?: string
+}

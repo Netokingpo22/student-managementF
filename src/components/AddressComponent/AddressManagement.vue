@@ -1,8 +1,15 @@
 <template>
-    <div>
+    <div class="border-b-4">
+        <div class="pt-2"></div>
+        <div class="flex justify-between">
+            <p class="text-xl"><strong>Address</strong></p>
+            <div class="order-last">
+                <v-btn @click="showAddAddressDialog = true" variant="tonal" color="success">Address<v-icon
+                        icon="mdi-plus"></v-icon></v-btn>
+            </div>
+        </div>
         <AddressTable :addresses="localAddresses" @edit="editAddress" @delete="openDeleteDialog" />
-        <v-btn @click="showAddAddressDialog = true" color="primary">Add Address</v-btn>
-
+        <div class="pb-2"></div>
         <AddAddressDialog v-model="showAddAddressDialog" :address="editingAddress" :studentId="props.studentId"
             @add="addAddress" />
         <EditAddressDialog v-model="showEditAddressDialog" :address="editingAddress" :studentId="props.studentId"
@@ -12,7 +19,7 @@
 
         <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
             {{ snackbarMessage }}
-            <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+            <v-btn @click="snackbarVisible = false">Close</v-btn>
         </v-snackbar>
     </div>
 </template>
@@ -25,8 +32,7 @@ import EditAddressDialog from './SubComponents/EditAddressDialog.vue';
 import DeleteConfirmationDialog from './SubComponents/DeleteConfirmationDialog.vue';
 import { AddressService } from '@/services/addressService';
 import { useSnackbar } from '@/components/Composables/useSnackbar';
-import type { Address } from '@/interfaces/Address';
-import type { AddressPost } from '@/interfaces/AddressPost';
+import type { Address, AddressPost } from '@/interfaces/AddressInterfaces';
 
 const props = defineProps<{ addresses: Address[], studentId: number }>();
 const emit = defineEmits(['update:addresses']);

@@ -13,8 +13,10 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" @click="submit">Submit</v-btn>
+                <v-btn @click="close" variant="tonal" color="error">Cancel&nbsp;<v-icon
+                        icon="mdi-close"></v-icon></v-btn>
+                <v-btn @click="submit" variant="tonal" color="primary">update&nbsp;<v-icon
+                        icon="mdi-check"></v-icon></v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -24,8 +26,7 @@
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email as emailValidator } from '@vuelidate/validators';
-import type { Email } from '@/interfaces/Email';
-import type { EmailPost } from '@/interfaces/EmailPost';
+import type { Email, EmailPost } from '@/interfaces/EmailInterfaces';
 
 const props = defineProps<{
     modelValue: boolean;
@@ -80,7 +81,5 @@ const close = () => {
     internalDialog.value = false;
     emit('update:modelValue', false);
     v$.value.$reset();
-    localEmail.value = '';
-    emailType.value = 'PERSONAL';
 };
 </script>

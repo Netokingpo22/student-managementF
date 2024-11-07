@@ -1,7 +1,15 @@
 <template>
-    <div>
+    <div class="border-b-4">
+        <div class="pt-2"></div>
+        <div class="flex justify-between">
+            <p class="text-xl"><strong>Email</strong></p>
+            <div class="order-last">
+                <v-btn @click="showAddEmailDialog = true" variant="tonal" color="success">Email<v-icon
+                        icon="mdi-plus"></v-icon></v-btn>
+            </div>
+        </div>
         <EmailTable :emails="localEmails" @edit="editEmail" @delete="openDeleteDialog" />
-        <v-btn @click="showAddEmailDialog = true" color="primary">Add Email</v-btn>
+        <div class="pb-2"></div>
         <AddEmailDialog v-model="showAddEmailDialog" :email="editingEmail" :studentId="props.studentId"
             @add="addEmail" />
         <EditEmailDialog v-model="showEditEmailDialog" :email="editingEmail" :studentId="props.studentId"
@@ -9,7 +17,7 @@
         <DeleteConfirmationDialog v-model="isDeleteDialogVisible" @confirm="deleteEmail" />
         <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
             {{ snackbarMessage }}
-            <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+            <v-btn @click="snackbarVisible = false">Close</v-btn>
         </v-snackbar>
     </div>
 </template>
@@ -22,8 +30,7 @@ import EditEmailDialog from '@/components/EmailComponent/SubComponents/EditEmail
 import DeleteConfirmationDialog from '@/components/EmailComponent/SubComponents/DeleteConfirmationDialog.vue';
 import { EmailService } from '@/services/emailService';
 import { useSnackbar } from '@/components/Composables/useSnackbar';
-import type { Email } from '@/interfaces/Email';
-import type { EmailPost } from '@/interfaces/EmailPost';
+import type { Email, EmailPost } from '@/interfaces/EmailInterfaces';
 
 const props = defineProps<{ emails: Email[], studentId: number }>();
 const emit = defineEmits(['update:emails']);

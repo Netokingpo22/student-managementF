@@ -1,31 +1,46 @@
 <template>
-    <div class="flex justify-center items-center w-full h-screen">
+    <div class="flex justify-center items-start w-full h-screen pt-36">
         <div v-if="student" class="flex flex-col gap-y-1 w-4/6">
-            <div class="flex flex-row gap-x-5">
-                <p><strong>ID:</strong> {{ student.studentId }}</p>
-            </div>
-            <div class="flex flex-row gap-x-5">
-                <p><strong>First Name:</strong> {{ student.firstName }}</p>
-                <p><strong>Middle Name:</strong> {{ student.middleName }}</p>
-                <p><strong>Last Name:</strong> {{ student.lastName }}</p>
-            </div>
-            <div class="flex flex-row gap-x-5">
-                <p><strong>Gender:</strong> {{ student.gender }}</p>
-                <p><strong>CreatedOn:</strong> {{ student.createdOn }}</p>
-                <p><strong>UpdatedOn:</strong> {{ student.updatedOn }}</p>
+            <div class="border-y-4">
+                <div class="flex justify-between pt-4">
+                    <div class="flex flex-row order-first">
+                        <v-btn @click="exitStudent" color="warning" class="mr-4" variant="tonal"><v-icon
+                                icon="mdi-chevron-left" size="x-large"></v-icon>back</v-btn>
+                        <p class="text-3xl"><strong>Student details</strong></p>
+                    </div>
+                    <div class="order-last">
+                        <v-btn @click="dialogVisible = true" color="primary" variant="tonal" class="mx-1">Edit&nbsp;
+                            <v-icon icon="mdi-pencil"></v-icon></v-btn>
+                        <v-btn @click=" showDeleteDialog = true" variant="tonal" color="error">Delete&nbsp;<v-icon
+                                icon="mdi-delete"></v-icon>
+                        </v-btn>
+                    </div>
+                </div>
+                <div class="flex flex-row gap-x-5">
+                    <p><strong>ID:</strong> {{ student.studentId }}</p>
+                </div>
+                <div class="flex flex-row gap-x-5">
+                    <p><strong>First Name:</strong> {{ student.firstName }}</p>
+                    <p><strong>Middle Name:</strong> {{ student.middleName }}</p>
+                    <p><strong>Last Name:</strong> {{ student.lastName }}</p>
+                </div>
+                <div class="flex flex-row gap-x-5 pb-4">
+                    <p><strong>Gender:</strong> {{ student.gender }}</p>
+                    <p><strong>CreatedOn:</strong> {{ student.createdOn }}</p>
+                    <p><strong>UpdatedOn:</strong> {{ student.updatedOn }}</p>
+                </div>
             </div>
             <EmailManagement :emails="student.emails" :studentId="student.studentId" />
             <AddressManagement :addresses="student.addresses" :studentId="student.studentId" />
             <PhoneManagement :phones="student.phones" :studentId="student.studentId" />
-            <v-btn @click="dialogVisible = true" color="primary">Edit Student</v-btn>
-            <v-btn @click="showDeleteDialog = true" color="red">Delete Student</v-btn>
+            <div class="pb-20"></div>
             <StudentEdit :student="student" :dialogVisible="dialogVisible" @update:modelValue="dialogVisible = $event"
                 @updateStudent="updateStudent" />
             <DeleteConfirmationDialog v-model="showDeleteDialog" @confirm="deleteStudent" />
         </div>
         <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
             {{ snackbarMessage }}
-            <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+            <v-btn @click="snackbarVisible = false">Close</v-btn>
         </v-snackbar>
     </div>
 </template>
@@ -34,7 +49,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { StudentService } from '@/services/StudentService';
-import type { Student } from '@/interfaces/Student';
+import type { Student } from '@/interfaces/StudentInterfaces';
 import EmailManagement from '@/components/EmailComponent/EmailManagement.vue';
 import AddressManagement from '@/components/AddressComponent/AddressManagement.vue';
 import PhoneManagement from '@/components/PhoneComponent/PhoneManagement.vue';
@@ -80,6 +95,9 @@ const deleteStudent = async () => {
     }
 };
 
+const exitStudent = () => {
+    router.push('/');
+};
 onMounted(() => {
     fetchStudentDetails();
 });

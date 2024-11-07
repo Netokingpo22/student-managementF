@@ -6,8 +6,10 @@
                 Are you sure you want to delete this item?
             </v-card-text>
             <v-card-actions>
-                <v-btn color="red darken-1" @click="close">Cancel</v-btn>
-                <v-btn color="green darken-1" @click="confirmDeletion">Yes, Delete</v-btn>
+                <v-btn @click="close" variant="tonal" color="error">Cancel&nbsp;<v-icon
+                        icon="mdi-close"></v-icon></v-btn>
+                <v-btn @click="confirmDeletion" variant="tonal" color="success">Yes, Delete&nbsp;<v-icon
+                        icon="mdi-check"></v-icon></v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -15,31 +17,20 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-
 const props = defineProps<{
     modelValue: boolean;
 }>();
-
 const emit = defineEmits(['update:modelValue', 'confirm']);
-
 const internalDialog = ref(props.modelValue);
-
-// Synchronize internal state with the `modelValue` prop
 watch(() => props.modelValue, (newVal) => {
     internalDialog.value = newVal;
 });
-
-// Emit changes to the `modelValue` prop
 watch(internalDialog, (newVal) => {
     emit('update:modelValue', newVal);
 });
-
-// Close the dialog
 const close = () => {
     internalDialog.value = false;
 };
-
-// Confirm deletion
 const confirmDeletion = () => {
     emit('confirm');
     close();

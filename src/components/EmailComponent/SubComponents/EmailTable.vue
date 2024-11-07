@@ -13,9 +13,12 @@
                 <td>{{ email.emailId }}</td>
                 <td>{{ email.email }}</td>
                 <td>{{ email.emailType }}</td>
-                <td>
-                    <v-btn @click="$emit('edit', email)" color="warning" class="mr-2">Edit</v-btn>
-                    <v-btn @click="$emit('delete', email.emailId)" color="error">Delete</v-btn>
+                <td class="flex justify-end items-center">
+                    <v-btn @click="$emit('edit', email)" variant="tonal" color="primary" class="mr-2">Edit&nbsp; <v-icon
+                            icon="mdi-pencil"></v-icon></v-btn>
+                    <v-btn @click="$emit('delete', email.emailId)" variant="tonal" color="error">Delete&nbsp;<v-icon
+                            icon="mdi-delete"></v-icon>
+                    </v-btn>
                 </td>
             </tr>
         </tbody>
@@ -23,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Email } from '@/interfaces/Email';
+import type { Email } from '@/interfaces/EmailInterfaces';
 
 const props = defineProps<{ emails: Email[] }>();
 </script>

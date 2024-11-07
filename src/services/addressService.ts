@@ -1,5 +1,4 @@
-import type { Address } from '@/interfaces/Address'
-import type { AddressPost } from '@/interfaces/AddressPost'
+import type { Address, AddressPost } from '@/interfaces/AddressInterfaces'
 
 export class AddressService {
   static async addAddress(newAddress: AddressPost): Promise<Address> {

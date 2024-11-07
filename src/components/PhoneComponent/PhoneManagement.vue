@@ -1,7 +1,15 @@
 <template>
     <div>
+        <div class="pt-2"></div>
+        <div class="flex justify-between">
+            <p class="text-xl"><strong>Phone</strong></p>
+            <div class="order-last">
+                <v-btn @click="showAddPhoneDialog = true" variant="tonal" color="success">Phone<v-icon
+                        icon="mdi-plus"></v-icon></v-btn>
+            </div>
+        </div>
         <PhoneTable :phones="localPhones" @edit="editPhone" @delete="openDeleteDialog" />
-        <v-btn @click="showAddPhoneDialog = true" color="primary">Add Phone</v-btn>
+        <div class="pb-2"></div>
         <AddPhoneDialog v-model="showAddPhoneDialog" :phone="editingPhone" :studentId="props.studentId"
             @add="addPhone" />
         <EditPhoneDialog v-model="showEditPhoneDialog" :phone="editingPhone" :studentId="props.studentId"
@@ -9,7 +17,7 @@
         <DeleteConfirmationDialog v-model="isDeleteDialogVisible" @confirm="deletePhone" />
         <v-snackbar v-model="snackbarVisible" :color="snackbarColor" timeout="3000">
             {{ snackbarMessage }}
-            <v-btn color="pink" @click="snackbarVisible = false">Close</v-btn>
+            <v-btn @click="snackbarVisible = false">Close</v-btn>
         </v-snackbar>
     </div>
 </template>
@@ -21,8 +29,7 @@ import EditPhoneDialog from './SubComponents/EditPhoneDialog.vue';
 import DeleteConfirmationDialog from './SubComponents/DeleteConfirmationDialog.vue';
 import { PhoneService } from '@/services/phoneService';
 import { useSnackbar } from '@/components/Composables/useSnackbar';
-import type { Phone } from '@/interfaces/Phone';
-import type { PhonePost } from '../../interfaces/PhonePost';
+import type { Phone, PhonePost } from '@/interfaces/PhoneInterfaces';
 
 
 const props = defineProps<{ phones: Phone[], studentId: number }>();

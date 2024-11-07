@@ -1,5 +1,4 @@
-import type { Phone } from '@/interfaces/Phone'
-import type { PhonePost } from '@/interfaces/PhonePost'
+import type { Phone, PhonePost } from '@/interfaces/PhoneInterfaces'
 
 export class PhoneService {
   static async addPhone(newPhonePost: PhonePost): Promise<Phone> {
