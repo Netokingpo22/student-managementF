@@ -6,18 +6,21 @@
             </v-card-title>
             <v-card-text>
                 <v-form ref="editForm" @submit.prevent="submit" novalidate>
-                    <v-text-field v-model="localAddress" label="Address Line" required
-                        :error-messages="errorMessages"></v-text-field>
-                    <v-text-field v-model="city" label="City"></v-text-field>
-                    <v-text-field v-model="state" label="State"></v-text-field>
-                    <v-text-field v-model="zipCode" label="ZIP Code"></v-text-field>
+                    <v-text-field v-model="localAddress" label="Street" :error-messages="errorMessages.street" required
+                        placeholder="Enter street address" />
+                    <v-text-field v-model="city" label="City (Optional)" placeholder="Enter city"
+                        :error-messages="errorMessages.city" />
+                    <v-text-field v-model="state" label="State (Optional)" placeholder="Enter state"
+                        :error-messages="errorMessages.state" />
+                    <v-text-field v-model="zipCode" label="Zip Code (Optional)" type="number"
+                        placeholder="Enter zip code" :error-messages="errorMessages.zipCode" />
                 </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn @click="close" variant="tonal" color="error">Cancel&nbsp;<v-icon
                         icon="mdi-close"></v-icon></v-btn>
-                <v-btn @click="submit" variant="tonal" color="primary">update&nbsp;<v-icon
+                <v-btn @click="submit" variant="tonal" color="primary">Update&nbsp;<v-icon
                         icon="mdi-check"></v-icon></v-btn>
             </v-card-actions>
         </v-card>
@@ -27,7 +30,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, minLength, maxLength } from '@vuelidate/validators';
 import type { Address, AddressPost } from '@/interfaces/AddressInterfaces';
 
 const props = defineProps<{
@@ -44,12 +47,21 @@ const city = ref<string>(props.address?.city || '');
 const state = ref<string>(props.address?.state || '');
 const zipCode = ref<string>(props.address?.zipCode || '');
 
-const rules = { localAddress: { required } };
-const v$ = useVuelidate(rules, { localAddress });
+const rules = {
+    localAddress: { required, minLength: minLength(3), maxLength: maxLength(100) },
+    city: { minLength: minLength(3), maxLength: maxLength(100) },
+    state: { minLength: minLength(2), maxLength: maxLength(45) },
+    zipCode: { minLength: minLength(5), maxLength: maxLength(10) }
+};
 
-const errorMessages = computed(() =>
-    v$.value.localAddress?.$errors.map(e => e.$message.toString()) || []
-);
+const v$ = useVuelidate(rules, { localAddress, city, state, zipCode });
+
+const errorMessages = computed(() => ({
+    street: v$.value.localAddress.$errors.map(e => e.$message.toString()),
+    city: v$.value.city?.$errors.map(e => e.$message.toString()) || [],
+    state: v$.value.state?.$errors.map(e => e.$message.toString()) || [],
+    zipCode: v$.value.zipCode?.$errors.map(e => e.$message.toString()) || []
+}));
 
 watch(() => props.modelValue, (newVal) => {
     internalDialog.value = newVal;

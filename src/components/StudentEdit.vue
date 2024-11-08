@@ -6,10 +6,14 @@
             </v-card-title>
             <v-card-text>
                 <v-form ref="editForm" @submit.prevent="submit" novalidate>
-                    <v-text-field v-model="localStudent.firstName" label="First Name" required></v-text-field>
-                    <v-text-field v-model="localStudent.middleName" label="Middle Name"></v-text-field>
-                    <v-text-field v-model="localStudent.lastName" label="Last Name" required></v-text-field>
-                    <v-select v-model="localStudent.gender" :items="genders" label="Gender" required></v-select>
+                    <v-text-field v-model="localStudent.firstName" label="First Name"
+                        :error-messages="errorMessages.firstName" required placeholder="John"></v-text-field>
+                    <v-text-field v-model="localStudent.middleName" label="Middle Name (Optional)"
+                        :error-messages="errorMessages.middleName" placeholder="Alexander"></v-text-field>
+                    <v-text-field v-model="localStudent.lastName" label="Last Name"
+                        :error-messages="errorMessages.lastName" required placeholder="Doe"></v-text-field>
+                    <v-select v-model="localStudent.gender" :items="genders" label="Gender"
+                        :error-messages="errorMessages.gender" required></v-select>
                 </v-form>
             </v-card-text>
             <v-card-actions>
@@ -27,10 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits, computed } from 'vue';
 import { StudentService } from '@/services/StudentService';
 import { useSnackbar } from '@/components/Composables/useSnackbar';
 import type { Student } from '@/interfaces/StudentInterfaces';
+import useVuelidate from '@vuelidate/core';
+import { maxLength, minLength, required } from '@vuelidate/validators';
 
 const props = defineProps<{
     student: Student | null;
@@ -55,19 +61,54 @@ watch(() => props.dialogVisible, (newVal) => {
 watch(internalDialogVisible, (newVal) => {
     emit('update:modelValue', newVal);
 });
-
 const originalStudent = ref<Student>({ ...props.student! });
 const localStudent = ref<Student>({ ...props.student! });
 
+watch(() => props.student, (newStudent) => {
+    originalStudent.value = { ...newStudent! };
+    localStudent.value = { ...newStudent! };
+});
+
+const rules = {
+    firstName: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(45),
+    },
+    middleName: {
+        minLength: minLength(3),
+        maxLength: maxLength(45),
+    },
+    lastName: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(45),
+    },
+    gender: { required },
+};
+
+const v$ = useVuelidate(rules, localStudent);
+
+const errorMessages = computed(() => ({
+    firstName: v$.value.firstName.$errors.map(e => e.$message.toString()),
+    middleName: v$.value.middleName.$errors.map(e => e.$message.toString()),
+    lastName: v$.value.lastName.$errors.map(e => e.$message.toString()),
+    gender: v$.value.gender.$errors.map(e => e.$message.toString()),
+}));
+
 const close = () => {
-    localStudent.value = { ...originalStudent.value };
     emit('update:modelValue', false);
 };
 
 const submit = async () => {
+    v$.value.$touch();
+    if (v$.value.$invalid) {
+        return;
+    }
     try {
-        if (localStudent.value.studentId > 0) {
+        if (localStudent.value?.studentId && localStudent.value.studentId > 0) {
             await StudentService.updateStudent(localStudent.value.studentId, localStudent.value);
+            originalStudent.value = { ...localStudent.value };
             emit('updateStudent', localStudent.value);
             showSnackbar('Student updated successfully!', 'green');
             close();

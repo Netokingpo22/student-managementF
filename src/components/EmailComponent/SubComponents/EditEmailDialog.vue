@@ -21,11 +21,10 @@
         </v-card>
     </v-dialog>
 </template>
-
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required, email as emailValidator } from '@vuelidate/validators';
+import { required, email as emailValidator, minLength, maxLength } from '@vuelidate/validators';
 import type { Email, EmailPost } from '@/interfaces/EmailInterfaces';
 
 const props = defineProps<{
@@ -40,7 +39,15 @@ const internalDialog = ref(props.modelValue);
 const localEmail = ref<string>(props.email?.email || '');
 const emailType = ref<string>(props.email?.emailType || 'PERSONAL');
 
-const rules = { localEmail: { required, email: emailValidator } };
+const rules = {
+    localEmail: {
+        required,
+        email: emailValidator,
+        minLength: minLength(5),
+        maxLength: maxLength(100)
+    }
+};
+
 const v$ = useVuelidate(rules, { localEmail });
 
 const errorMessages = computed(() =>

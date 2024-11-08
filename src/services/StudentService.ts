@@ -37,14 +37,6 @@ export class StudentService {
   }
 
   static async updateStudent(studentId: number, studentData: Student): Promise<Student | null> {
-    console.log(
-      JSON.stringify({
-        firstName: studentData.firstName,
-        lastName: studentData.lastName,
-        middleName: studentData.middleName,
-        gender: studentData.gender,
-      }),
-    )
     try {
       const response = await fetch(`http://localhost:8080/students/${studentId}`, {
         method: 'PUT',

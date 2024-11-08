@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-start w-full h-screen pt-36">
         <div v-if="student" class="flex flex-col gap-y-1 w-4/6">
-            <div class="border-y-4">
+            <div class="border-b-4">
                 <div class="flex justify-between pt-4">
                     <div class="flex flex-row order-first">
                         <v-btn @click="exitStudent" color="warning" class="mr-4" variant="tonal"><v-icon

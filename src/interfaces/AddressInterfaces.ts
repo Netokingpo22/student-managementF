@@ -9,7 +9,7 @@ export interface Address {
 export interface AddressPost {
   street: string
   studentId: number
-  city?: string
-  state?: string
-  zipCode?: string
+  city: string
+  state: string
+  zipCode: string
 }

@@ -7,10 +7,13 @@
             <v-card-text>
                 <v-form ref="addForm">
                     <v-text-field v-model="newAddress.street" label="Street" :error-messages="errorMessages.street"
-                        required />
-                    <v-text-field v-model="newAddress.city" label="City" />
-                    <v-text-field v-model="newAddress.state" label="State" />
-                    <v-text-field v-model="newAddress.zipCode" label="Zip Code" type="number" />
+                        required placeholder="Enter street address" />
+                    <v-text-field v-model="newAddress.city" label="City (Optional)" placeholder="Enter city"
+                        :error-messages="errorMessages.city" />
+                    <v-text-field v-model="newAddress.state" label="State (Optional)" placeholder="Enter state"
+                        :error-messages="errorMessages.state" />
+                    <v-text-field v-model="newAddress.zipCode" label="Zip Code (Optional)" type="number"
+                        placeholder="Enter zip code" :error-messages="errorMessages.zipCode" />
                 </v-form>
             </v-card-text>
             <v-card-actions>
@@ -25,7 +28,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, minLength, maxLength } from '@vuelidate/validators';
 import type { Address, AddressPost } from '@/interfaces/AddressInterfaces';
 
 const props = defineProps<{
@@ -47,13 +50,32 @@ const newAddress = ref<AddressPost>({
 });
 
 const rules = {
-    street: { required }
+    street: {
+        required,
+        minLength: minLength(3),
+        maxLength: maxLength(100)
+    },
+    city: {
+        minLength: minLength(3),
+        maxLength: maxLength(100)
+    },
+    state: {
+        minLength: minLength(3),
+        maxLength: maxLength(45)
+    },
+    zipCode: {
+        minLength: minLength(2),
+        maxLength: maxLength(10)
+    }
 };
 
 const v$ = useVuelidate(rules, newAddress);
 
 const errorMessages = computed(() => ({
-    street: v$.value.street.$errors.map(e => e.$message.toString())
+    street: v$.value.street.$errors.map(e => e.$message.toString()),
+    city: v$.value.city.$errors.map(e => e.$message.toString()),
+    state: v$.value.state.$errors.map(e => e.$message.toString()),
+    zipCode: v$.value.zipCode.$errors.map(e => e.$message.toString())
 }));
 
 watch(() => props.modelValue, (newVal) => {

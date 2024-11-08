@@ -7,7 +7,7 @@
             <v-card-text>
                 <v-form ref="addForm">
                     <v-text-field v-model="newEmail.email" label="Email" type="email"
-                        :error-messages="errorMessages.email" required />
+                        :error-messages="errorMessages.email" required placeholder="example@domain.com" />
                     <v-select v-model="newEmail.emailType" :items="emailTypes" label="Email Type"
                         :error-messages="errorMessages.emailType" required />
                 </v-form>
@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required, email as emailValidator } from '@vuelidate/validators';
+import { required, email as emailValidator, minLength, maxLength } from '@vuelidate/validators';
 import type { Email, EmailPost } from '@/interfaces/EmailInterfaces';
 
 const props = defineProps<{
@@ -46,7 +46,12 @@ const newEmail = ref<Email>({
 const emailTypes = ['PERSONAL', 'WORK', 'SCHOOL'];
 
 const rules = {
-    email: { required, email: emailValidator },
+    email: {
+        required,
+        email: emailValidator,
+        minLength: minLength(5),
+        maxLength: maxLength(100)
+    },
     emailType: { required },
 };
 

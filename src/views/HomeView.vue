@@ -13,16 +13,16 @@
         </template>
         <v-data-table :headers="headers" :items="students" :search="search" item-key="studentId" :loading="isLoading">
           <template v-slot:[`item.hasEmails`]="{ item }">
-            <v-icon color="green-lighten-2" v-if="item.hasEmails">mdi-email</v-icon>
-            <v-icon color="red-lighten-2" v-else>mdi-email-off</v-icon>
+            <v-icon color="green-lighten-2" v-if="item.hasEmails" icon="mdi-email"></v-icon>
+            <v-icon color="red-lighten-2" icon="mdi-email-off" v-else></v-icon>
           </template>
           <template v-slot:[`item.hasAddresses`]="{ item }">
-            <v-icon color="green-lighten-2" v-if="item.hasAddresses">mdi-map-marker</v-icon>
-            <v-icon color="red-lighten-2" v-else>mdi-map-marker-off</v-icon>
+            <v-icon color="green-lighten-2" icon="mdi-map-marker" v-if="item.hasAddresses"></v-icon>
+            <v-icon color="red-lighten-2" icon="mdi-map-marker-off" v-else></v-icon>
           </template>
           <template v-slot:[`item.hasPhones`]="{ item }">
-            <v-icon color="green-lighten-2" v-if="item.hasPhones">mdi-phone</v-icon>
-            <v-icon color="red-lighten-2" v-else>mdi-phone-off</v-icon>
+            <v-icon color="green-lighten-2" icon="mdi-phone" v-if="item.hasPhones"></v-icon>
+            <v-icon color="red-lighten-2" icon="mdi-phone-off" v-else></v-icon>
           </template>
           <template v-slot:[`item.action`]="{ item }">
             <v-btn @click="goToStudentDetails(item.studentId)" variant="tonal" color="warning">DETAILS&nbsp;<v-icon
@@ -39,10 +39,11 @@
           <v-card-text>
             <v-form ref="studentForm" @submit.prevent="submitStudentForm">
               <v-text-field v-model="newStudent.firstName" label="First Name" :error-messages="errorMessages.firstName"
-                required></v-text-field>
-              <v-text-field v-model="newStudent.middleName" label="Middle Name"></v-text-field>
+                required placeholder="John"></v-text-field>
+              <v-text-field v-model="newStudent.middleName" label="Middle Name (Optional)"
+                :error-messages="errorMessages.middleName" placeholder="Alexander"></v-text-field>
               <v-text-field v-model="newStudent.lastName" label="Last Name" :error-messages="errorMessages.lastName"
-                required></v-text-field>
+                required placeholder="Doe"></v-text-field>
               <v-select v-model="newStudent.gender" :items="genders" label="Gender"
                 :error-messages="errorMessages.gender" required></v-select>
             </v-form>
@@ -71,7 +72,7 @@ import { StudentDTOService } from '@/services/studentDTOService';
 import { StudentService } from '@/services/StudentService';
 import type { Student, StudentDTO, StudentPost } from '@/interfaces/StudentInterfaces';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, minLength, maxLength } from '@vuelidate/validators';
 
 const router = useRouter();
 
@@ -103,8 +104,20 @@ const headers = ref([
 ]);
 
 const rules = {
-  firstName: { required },
-  lastName: { required },
+  firstName: {
+    required,
+    minLength: minLength(3),
+    maxLength: maxLength(45),
+  },
+  middleName: {
+    minLength: minLength(3),
+    maxLength: maxLength(45),
+  },
+  lastName: {
+    required,
+    minLength: minLength(3),
+    maxLength: maxLength(45),
+  },
   gender: { required },
 };
 
@@ -112,6 +125,7 @@ const v$ = useVuelidate(rules, newStudent);
 
 const errorMessages = computed(() => ({
   firstName: v$.value.firstName.$errors.map(e => e.$message.toString()),
+  middleName: v$.value.middleName.$errors.map(e => e.$message.toString()),
   lastName: v$.value.lastName.$errors.map(e => e.$message.toString()),
   gender: v$.value.gender.$errors.map(e => e.$message.toString()),
 }));
@@ -140,6 +154,13 @@ const submitStudentForm = async () => {
     students.value.push(studentDTO);
     dialogVisible.value = false;
     showSnackbar('Student created successfully!', 'green');
+    newStudent.value = {
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      gender: 'OTHER',
+    };
+    v$.value.$reset();
   } catch (error) {
     console.error('Error creating student:', error);
     showSnackbar('Error creating student!', 'red');

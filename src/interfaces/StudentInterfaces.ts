@@ -26,7 +26,7 @@ export interface StudentDTO {
 
 export interface StudentPost {
   firstName: string
-  middleName?: string
+  middleName: string
   lastName: string
   gender: 'MALE' | 'FEMALE' | 'OTHER'
 }

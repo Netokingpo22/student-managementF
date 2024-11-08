@@ -5,13 +5,15 @@
                 <span class="text-h5">Add Phone</span>
             </v-card-title>
             <v-card-text>
-                <v-form ref="addForm">
-                    <v-text-field v-model="newPhone.phoneNumber" label="Phone Number" type="tel"
-                        :error-messages="errorMessages.phoneNumber" required />
+                <v-form ref="addForm" @submit.prevent="submit" novalidate>
+                    <v-text-field v-model="newPhone.phoneNumber" label="Phone Number" type="number"
+                        :error-messages="errorMessages.phoneNumber" required placeholder="123-456-7890"></v-text-field>
                     <v-select v-model="newPhone.phoneType" :items="phoneTypes" label="Phone Type"
-                        :error-messages="errorMessages.phoneType" required />
-                    <v-text-field v-model="newPhone.countryCode" label="Country Code" />
-                    <v-text-field v-model="newPhone.areaCode" label="Area Code" />
+                        :error-messages="errorMessages.phoneType"></v-select>
+                    <v-text-field v-model="newPhone.countryCode" label="Country Code (Optional)" type="tel"
+                        :error-messages="errorMessages.countryCode" placeholder="Enter country code"></v-text-field>
+                    <v-text-field v-model="newPhone.areaCode" label="Area Code (Optional)" type="tel"
+                        :error-messages="errorMessages.areaCode" placeholder="Enter area code"></v-text-field>
                 </v-form>
             </v-card-text>
             <v-card-actions>
@@ -26,7 +28,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, minLength, maxLength } from '@vuelidate/validators';
 import type { Phone, PhonePost } from '@/interfaces/PhoneInterfaces';
 
 const props = defineProps<{
@@ -50,15 +52,29 @@ const newPhone = ref<PhonePost>({
 const phoneTypes = ['MOBILE', 'HOME', 'WORK'];
 
 const rules = {
-    phoneNumber: { required },
-    phoneType: { required }
+    phoneNumber: {
+        required,
+        minLength: minLength(5),
+        maxLength: maxLength(15)
+    },
+    phoneType: { required },
+    countryCode: {
+        minLength: minLength(2),
+        maxLength: maxLength(5)
+    },
+    areaCode: {
+        minLength: minLength(2),
+        maxLength: maxLength(5)
+    },
 };
 
 const v$ = useVuelidate(rules, newPhone);
 
 const errorMessages = computed(() => ({
-    phoneNumber: v$.value.phoneNumber.$errors.map(e => e.$message.toString()),
-    phoneType: v$.value.phoneType.$errors.map(e => e.$message.toString())
+    phoneNumber: v$.value.phoneNumber?.$errors.map(e => e.$message.toString()) || [],
+    phoneType: v$.value.phoneType?.$errors.map(e => e.$message.toString()) || [],
+    countryCode: v$.value.countryCode?.$errors.map(e => e.$message.toString()) || [],
+    areaCode: v$.value.areaCode?.$errors.map(e => e.$message.toString()) || [],
 }));
 
 watch(() => props.modelValue, (newVal) => {
